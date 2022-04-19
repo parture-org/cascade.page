@@ -552,10 +552,10 @@ function m(m: TimeMarker): string {
 
 export const actions: ActionTree<State, State> = {
   nuxtServerInit(store: any, context: Context) {
-    if (context.req.timelineFile) {
+    if (context.req?.timelineFile) {
       store.commit("setEventsString", context.req.timelineFile);
     }
-    if (context.req.timelinePath) {
+    if (context.req?.timelinePath) {
       store.commit("setTimelinePath", context.req.timelinePath);
     }
   },
