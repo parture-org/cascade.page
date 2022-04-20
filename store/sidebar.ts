@@ -20,6 +20,9 @@ interface State {
   darkMode: DarkMode;
 }
 
+// todo: centrally define in config file
+const DARK_MODE_DEFAULT = "light";
+
 export const state: () => State = () => ({
   selectedComponent: "editor",
   visible: true,
@@ -28,7 +31,7 @@ export const state: () => State = () => ({
   resizeStartY: 0,
   heightDiff: 0,
   sidebarHeight: 300,
-  darkMode: "system",
+  darkMode: DARK_MODE_DEFAULT,
 });
 
 export const mutations: MutationTree<State> = {
@@ -41,7 +44,7 @@ export const mutations: MutationTree<State> = {
     } else if (localStorage.theme === "light") {
       state.darkMode = "light";
     } else {
-      state.darkMode = "system";
+      state.darkMode = DARK_MODE_DEFAULT;
     }
   },
   toggleDarkMode(state: State) {
