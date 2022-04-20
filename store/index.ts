@@ -29,6 +29,9 @@ interface State {
   sort: Sort;
 }
 
+// import precompiled timelines
+import precompiledTimelines from '/map.json';
+
 interface DateInterval {
   from: DateTime;
   to: DateTime;
@@ -50,6 +53,19 @@ export const timeMarkerWeightMinimum = 0.25;
 
 let currentTimelineName = "";
 let list = [] as string[];
+
+// populate precompiled timelines
+// todo: there should be a better nicer way to this that fits with the business logic
+if (process.browser) {
+  for (const [timelineName, timeline] of Object.entries(precompiledTimelines)) {
+    localStorage.setItem(timelineName, timeline + "");
+  }
+
+  currentTimelineName = "main";
+  list = Object.keys(precompiledTimelines);
+
+  localStorage.setItem("timelines", list.join(','))
+}
 
 const exampleTimeline = `// Comments start with two slashes: \`//\`
 // Tags start with a pound sign: \`#\`
@@ -145,8 +161,8 @@ endGroup
 `;
 
 const eventsString = currentTimelineName
-  ? localStorage.getItem(currentTimelineName)
-  : exampleTimeline;
+  ? (process.browser && localStorage.getItem(currentTimelineName))
+  : precompiledTimelines.main;
 
 export const state: () => State = () => ({
   list: list,
@@ -552,11 +568,16 @@ function m(m: TimeMarker): string {
 
 export const actions: ActionTree<State, State> = {
   nuxtServerInit(store: any, context: Context) {
-    if (context.req.timelineFile) {
-      store.commit("setEventsString", context.req.timelineFile);
+    if (process.static) {
+      // todo: parse static file
     }
-    if (context.req.timelinePath) {
-      store.commit("setTimelinePath", context.req.timelinePath);
+    else {
+      if (context.req?.timelineFile) {
+        store.commit("setEventsString", context.req.timelineFile);
+      }
+      if (context.req?.timelinePath) {
+        store.commit("setTimelinePath", context.req.timelinePath);
+      }
     }
   },
   setViewport({ commit, getters }, viewport) {
