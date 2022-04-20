@@ -1,4 +1,5 @@
 <template>
+  <!-- todo: expose edittable to central config -->
   <Main :edittable="true" />
 </template>
 
